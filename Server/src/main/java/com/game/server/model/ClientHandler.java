@@ -31,12 +31,14 @@ public class ClientHandler extends Thread {
         while (!socket.isClosed()) {
 
             try {
-                //inputStream = new ObjectInputStream(socket.getInputStream());
 
                 // Waiting for message...
                 received = (Player) inputStream.readObject();
 
-                notifyClients(received);
+                if (received.isWinner())
+                    Server.socketsClients.clear();
+                else
+                    notifyClients(received);
 
             } catch (IOException e) {
 

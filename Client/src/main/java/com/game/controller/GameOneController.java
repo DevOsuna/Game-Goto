@@ -702,7 +702,7 @@ public class GameOneController implements Initializable, Observer {
         stopTimer();
         alert.setTitle(":)");
         alert.setHeaderText("¡En Hora Buena!");
-        alert.setContentText("¡FELICIDADES " + playerName + " HAS GANADO!");
+        alert.setContentText("¡FELICIDADES " + playerName + " HA GANADO!");
 
         if(imageFile.exists())
             alert.setGraphic(new ImageView(Table.class.getResource("jugador.png").toString()));
