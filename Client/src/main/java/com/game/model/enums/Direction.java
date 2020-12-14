@@ -1,8 +1,8 @@
 package com.game.model.enums;
 
-public enum Position {
+public enum Direction {
     RIGHT,
     LEFT,
-    FRONT,
-    BACK
+    UP,
+    DOWN
 }

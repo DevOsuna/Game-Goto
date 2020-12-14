@@ -1,6 +1,6 @@
 package com.game.model;
 
-import com.game.model.enums.Position;
+import com.game.model.enums.Direction;
 import javafx.scene.image.ImageView;
 
 public class Vehicle {
@@ -10,6 +10,7 @@ public class Vehicle {
     public Vehicle() {
         images = new ImageView[4];
         loadImages();
+        imagesConfig();
     }
 
     private void loadImages() {
@@ -20,9 +21,17 @@ public class Vehicle {
         images[3] = new ImageView(Vehicle.class.getResource("carroAtras.png").toString());
     }
 
-    public ImageView getImageView(Position position) {
+    private void imagesConfig() {
 
-        switch (position) {
+        for (ImageView image: images) {
+            image.setFitHeight(40);
+            image.setFitWidth(40);
+        }
+    }
+
+    public ImageView getImageView(Direction direction) {
+
+        switch (direction) {
 
             case LEFT:
                 return images[0];
@@ -30,10 +39,10 @@ public class Vehicle {
             case RIGHT:
                 return images[1];
 
-            case FRONT:
+            case UP:
                 return images[2];
 
-            case BACK:
+            case DOWN:
                 return images[3];
 
             default:
