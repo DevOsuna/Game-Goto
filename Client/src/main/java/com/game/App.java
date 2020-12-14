@@ -1,21 +1,17 @@
 package com.game;
 
+import com.game.controller.GameOneController;
 import com.game.controller.HomeController;
 import com.game.model.Table;
+import com.game.socket.Client;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -31,6 +27,9 @@ public class App extends Application {
     private GridPane tableJuego;
     private Table table;
 
+    public static Client client;
+
+    private static GameOneController gameOneController;
     private static Scene scene;
     private static Stage stage;
 
@@ -56,57 +55,77 @@ public class App extends Application {
         return fxmlLoader.load();
     }
 
-    public void showPartida(){
+    public void showOneGame(){
 
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("GameOne.fxml"));
+            scene = new Scene(fxmlLoader.load());
+
+            this.gameOneController = fxmlLoader.getController();
+            gameOneController.setApp(this);
+
+            loadEventMoveCharacter();
+
+            stage.setScene(scene);
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        /*
         table = new Table();
-        table.setMain(this);
-        table.setNombreJugador(namePlayer);
-        tableJuego = table.getTablero(level);
+        table.setApp(this);
+        table.setPlayerName(namePlayer);
+        tableJuego = table.getBoardGame(level);
 
-        Label lbTiempo = new Label("Tiempo :");
-        lbTiempo.setTextFill(Color.BLACK);
-        lbTiempo.setFont(new Font("Arial", 30));
+        Label lbTime = new Label("Tiempo :");
+        lbTime.setTextFill(Color.BLACK);
+        lbTime.setFont(new Font("Arial", 30));
         lbSeconds = new Label();
         lbSeconds.setFont(new Font("Arial", 30));
 
-        HBox hBoxTiempo = new HBox();
-        hBoxTiempo.setAlignment(Pos.CENTER);
-        hBoxTiempo.setSpacing(40);
-        hBoxTiempo.getChildren().addAll(lbTiempo, lbSeconds);
+        HBox hBoxTime = new HBox();
+        hBoxTime.setAlignment(Pos.CENTER);
+        hBoxTime.setSpacing(40);
+        hBoxTime.getChildren().addAll(lbTime, lbSeconds);
 
         AnchorPane pane = new AnchorPane();
         pane.getChildren().add(tableJuego);
         AnchorPane.setLeftAnchor(tableJuego, 15.00);
         AnchorPane.setRightAnchor(tableJuego, 15.00);
 
-        Button btnIntentar = new Button("Volver a Intentar");
-        btnIntentar.setTextFill(Color.BLACK);
-        loadStyle(btnIntentar);
+        Button btnTryAgain = new Button("Volver a Intentar");
+        btnTryAgain.setTextFill(Color.BLACK);
+        loadStyle(btnTryAgain);
 
         Button btnMenu = new Button("Menu");
         btnMenu.setTextFill(Color.BLACK);
         loadStyle(btnMenu);
 
-        HBox hboxBotones = new HBox();
-        hboxBotones.setAlignment(Pos.CENTER);
-        hboxBotones.setSpacing(40);
-        hboxBotones.getChildren().addAll(btnIntentar, btnMenu);
+        HBox hboxButtons = new HBox();
+        hboxButtons.setAlignment(Pos.CENTER);
+        hboxButtons.setSpacing(40);
+        hboxButtons.getChildren().addAll(btnTryAgain, btnMenu);
 
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
-        vBox.getChildren().addAll(hBoxTiempo, pane, hboxBotones);
+        vBox.getChildren().addAll(hBoxTime, pane, hboxButtons);
 
-        setRoot(vBox);
-        loadEventMoveCharacter();
-
-        btnIntentar.setOnMouseClicked( e-> {
-            showPartida();
+        btnTryAgain.setOnMouseClicked( e-> {
+                table.stopTimer();
+                showOneGame();
         });
 
         btnMenu.setOnMouseClicked( e-> {
-            table.resetGame();
+            table.stopTimer();
             showMenu();
         });
+
+        scene = new Scene(vBox);
+        stage.setScene(scene);
+        loadEventMoveCharacter();
+
+         */
 
     }
 
@@ -128,10 +147,10 @@ public class App extends Application {
     private void loadEventMoveCharacter() {
 
         scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            table.eventoTablero(event);
+            gameOneController.eventBoardGame(event);
         });
 
-        table.iniciarTemporizador();
+        gameOneController.startTimer();
     }
 
     private void loadStyle(Button btn) {
@@ -151,6 +170,8 @@ public class App extends Application {
                 "    -fx-padding: 10 20 10 20;");
     }
 
-    public static void main(String[] args) { launch(); }
+    public static void main(String[] args) throws Exception {
+        launch();
+    }
 
 }

@@ -1,6 +1,8 @@
 package com.game.controller;
 
 import com.game.App;
+import com.game.model.Player;
+import com.game.socket.Client;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,16 +13,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import javax.imageio.ImageIO;
-
-import com.github.sarxos.webcam.Webcam;
+//import com.github.sarxos.webcam.Webcam;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class HomeController implements Initializable {
+public class HomeController implements Initializable, Observer {
 
     private App main;
 
@@ -39,18 +41,23 @@ public class HomeController implements Initializable {
     @FXML
     private ImageView iviewFondo;
 
+    public HomeController() {
+
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        iviewFondo.setImage(new Image
-                (HomeController.class.getResource("fondoMenu.jpg").toString()));
-        iviewPhoto.setImage(new Image
-                (HomeController.class.getResource("picture.png").toString()));
+        btnJugar.setDisable(true);
+        App.client = new Client();
+        App.client.addObserver(this);
+        Thread thread = new Thread(App.client);
+        thread.start();
     }
 
     @FXML
     public void handleJugar(ActionEvent event) {
         App.namePlayer = txtNombre.getText();
-        main.showPartida();
+        main.showOneGame();
     }
 
     @FXML
@@ -73,8 +80,8 @@ public class HomeController implements Initializable {
 
             else {}
 
-            Webcam webCam = Webcam.getDefault();
-            webCam.open();
+            //Webcam webCam = Webcam.getDefault();
+            //webCam.open();
 
             try {
 
@@ -89,9 +96,9 @@ public class HomeController implements Initializable {
                     imagenFile.createNewFile();
                 }
 
-                ImageIO.write(webCam.getImage(), "PNG", new File(
-                        HomeController.class.getResource("jugador.png").getPath()));
-                webCam.close();
+                //ImageIO.write(webCam.getImage(), "PNG", new File(
+                //        HomeController.class.getResource("jugador.png").getPath()));
+                //webCam.close();
                 iviewPhoto.setImage(new Image(
                         HomeController.class.getResource("jugador.png").getPath()));
 
@@ -105,5 +112,17 @@ public class HomeController implements Initializable {
 
     public void setMain(App main) {
         this.main = main;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+
+        Player player = (Player) arg;
+        System.out.println("Numero de rivales conectados: " +  player.getNumRivals());
+
+        if (player.getNumRivals() == 2){
+            btnJugar.setDisable(false);
+        }
+
     }
 }

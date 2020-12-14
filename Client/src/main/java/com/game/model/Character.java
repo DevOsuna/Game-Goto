@@ -1,6 +1,6 @@
 package com.game.model;
 
-import com.game.model.enums.Position;
+import com.game.model.enums.Direction;
 import javafx.scene.image.ImageView;
 
 public class Character {
@@ -10,6 +10,7 @@ public class Character {
     public Character() {
         images = new ImageView[4];
         loadImages();
+        imagesConfig();
     }
 
     private void loadImages() {
@@ -19,9 +20,17 @@ public class Character {
         images[3] = new ImageView(Character.class.getResource("personajeAtras.png").toString());
     }
 
-    public ImageView getImageView(Position position) {
+    private void imagesConfig() {
 
-        switch (position) {
+        for (ImageView image: images) {
+            image.setFitHeight(50);
+            image.setFitWidth(50);
+        }
+    }
+
+    public ImageView getImageView(Direction direction) {
+
+        switch (direction) {
 
             case LEFT:
                 return images[0];
@@ -29,10 +38,10 @@ public class Character {
             case RIGHT:
                 return images[1];
 
-            case FRONT:
+            case UP:
                 return images[2];
 
-            case BACK:
+            case DOWN:
                 return images[3];
 
             default:
